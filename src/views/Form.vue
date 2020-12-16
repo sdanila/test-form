@@ -1,296 +1,315 @@
 <template>
-  <form id="form" class="form" @submit.prevent="onSubmit">
-    <h3 class="form__title">Данные пациента</h3>
-    <section class="fio">
+  <div class="container">
+    <form id="form" class="form" @submit.prevent="onSubmit">
+      <h3 class="form__title">Данные пациента</h3>
+      <section class="fio">
 
-      <label class="form__label required">Имя:
-        <input
-          type="text"
-          class="form__input"
-          id="firstName"
-          v-model.trim="firstName"
-          :class="{invalid: ($v.firstName.$dirty && !$v.firstName.required)}"
-        >
-        <small
-          class="invalid"
-          v-if="($v.firstName.$dirty && !$v.firstName.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-
-      <label class="form__label required">Фамилия:
-        <input
-          type="text"
-          class="form__input"
-          id="lastName"
-          :class="{invalid: ($v.lastName.$dirty && !$v.lastName.required)}"
-          v-model.trim="lastName"
-        >
-        <small
-          class="invalid"
-          v-if="($v.lastName.$dirty && !$v.lastName.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-
-      <label class="form__label">Отчество:
-        <input
-          type="text"
-          class="form__input"
-          id="patronymic"
-          v-model.trim="patronymic"
-        >
-      </label>
-
-      <label class="form__label required">Дата рождения:
-        <input
-          type="date"
-          class="form__input"
-          id="dateborn"
-          :class="{invalid: ($v.dateborn.$dirty && !$v.dateborn.required)}"
-          v-model.trim="dateborn"
-        >
-        <small
-          class="invalid"
-          v-if="$v.dateborn.$dirty && !$v.dateborn.required"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-
-      <label class="form__label required">Номер телефона:
-        <input
-          type="tel"
-          class="form__input"
-          id="phone"
-          v-model.trim="phone"
-          :class="{invalid: ($v.phone.$dirty && !$v.phone.required) || ($v.phone.$dirty && !$v.phone.minLength) || ($v.phone.$dirty && !$v.phone.maxLength)}"
-        >
-        <small
-          class="invalid"
-          v-if="$v.phone.$dirty && !$v.phone.required"
-        >
-          Поле обязательное для заполнения
-        </small>
-
-        <small
-          class="invalid"
-          v-else-if="($v.phone.$dirty && !$v.phone.minLength) || ($v.phone.$dirty && !$v.phone.maxLength)"
-        >
-          Номер должен содержать {{$v.phone.$params.minLength.min}} цифр. <br> Сейчас он {{phone.length}}
-        </small>
-
-        <!-- <small
-          class="helper-text invalid"
-          v-else-if="$v.password.$dirty && !$v.password.minLength"
-        >
-          Пароль должен быть {{$v.password.$params.minLength.min}} символов. Сейчас он {{password.length}}
-        </small> -->
-
-
-
-      </label>
-
-      <label class="form__label">Пол:
-        <div class="wrapper">
-          <select id="gender" class="form__select" v-model="gender" >
-            <option value="male" selected>Мужчина</option>
-            <option value="female">Женщина</option>
-          </select>
-        </div>
-      </label>
-
-      <label class="form__label required">Группа пациентов:
-        <select
-          id="group"
-          class="form__select form__select_group"
-          multiple
-          :class="{invalid: ($v.group.$dirty && !$v.group.required)}"
-          v-model="group"
-        >
-          <option value="vip">VIP</option>
-          <option value="Propblem">Проблемные</option>
-          <option value="insurance">ОМС</option>
-        </select>
-        <small
-          class="invalid"
-          v-if="($v.group.$dirty && !$v.group.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-
-      <label class="form__label">Лечащий врач:
-        <div class="wrapper">
-          <select
-            id="doctor"
-            class="form__select form__select_doctor"
-            v-model="doctor"
+        <label class="form__label required">Имя:
+          <input
+            type="text"
+            class="form__input"
+            id="firstName"
+            v-model.trim="firstName"
+            :class="{invalid: validFirstName}"
           >
-            <option value="Ivanov">Иванов</option>
-            <option value="Zaharov">Захаров</option>
-            <option value="Сhernysheva">Чернышева</option>
-          </select>
-        </div>
-      </label>
-
-      <label class="form__label form__label_checkbox">Не отправлять смс:
-        <input
-          type="checkbox"
-          id="sms"
-          class="form__checkbox"
-          v-model="sms"
-        >
-      </label>
-
-    </section>
-
-    <hr>
-
-    <h3 class="form__title">Адрес:</h3>
-    <section class="adress">
-      <label class="form__label form__label_mb-0">Индекс:
-        <input
-          type="number"
-          class="form__input"
-          id="index"
-          v-model="index"
-        >
-      </label>
-
-      <label class="form__label form__label_mb-0">Страна:
-        <input
-          type="text"
-          class="form__input"
-          id="country"
-          v-model="country"
-        >
-      </label>
-
-      <label class="form__label form__label_mb-0">Область:
-        <input
-          type="text"
-          class="form__input"
-          id="region"
-          v-model="region"
-        >
-      </label>
-
-      <label class="form__label form__label_mb-0 required">Город:
-        <input
-          type="text"
-          class="form__input"
-          id="city"
-          :class="{invalid: ($v.city.$dirty && !$v.city.required)}"
-          v-model="city"
-        >
-        <small
-          class="invalid"
-          v-if="($v.city.$dirty && !$v.city.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-
-      <label class="form__label form__label_mb-0">Улица:
-        <input
-          type="text"
-          class="form__input"
-          id="street"
-          v-model="street"
-        >
-      </label>
-
-      <label class="form__label form__label_mb-0">Дом:
-        <input
-          type="text"
-          class="form__input"
-          id="house"
-          v-model="house"
-        >
-      </label>
-    </section>
-
-    <hr>
-
-    <h3 class="form__title">Паспорт:</h3>
-    <section class="typeDocument">
-
-      <label class="form__label required">Тип документа:
-        <div class="wrapper">
-          <select
-            id="document"
-            class="form__select"
-            :class="{invalid: ($v.document.$dirty && !$v.document.required)}"
-            v-model="document"
+          <small
+            class="invalid"
+            v-if="validFirstName"
           >
-            <option value="pasport">Паспорт</option>
-            <option value="birth-certificate">Свидетельство о рождении</option>
-            <option value="drivers-license">Водительское удостоверение</option>
+            Поле обязательное для заполнения
+          </small>
+        </label>
+
+        <label class="form__label required">Фамилия:
+          <input
+            type="text"
+            class="form__input"
+            id="lastName"
+            :class="{invalid: validLastName}"
+            v-model.trim="lastName"
+          >
+          <small
+            class="invalid"
+            v-if="validLastName"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
+
+        <label class="form__label">Отчество:
+          <input
+            type="text"
+            class="form__input"
+            id="patronymic"
+            v-model.trim="patronymic"
+          >
+        </label>
+
+        <label class="form__label required">Дата рождения:
+          <input
+            type="date"
+            class="form__input"
+            id="dateborn"
+            :class="{invalid: validDateborn}"
+            v-model="dateborn"
+          >
+          <small
+            class="invalid"
+            v-if="validDateborn"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
+
+        <label class="form__label required">Номер телефона:
+          <input
+            type="number"
+            class="form__input"
+            id="phone"
+            placeholder='Должен начинаться с цифры "7"'
+            v-model.trim="phone"
+            :class="{invalid: validPhone}"
+          >
+          <small
+            class="invalid"
+            v-if="validPhoneRequired"
+          >
+            Поле обязательное для заполнения
+          </small>
+
+
+          <small
+            class="invalid"
+            v-else-if="validPhoneMLength"
+          >
+            Номер должен содержать {{$v.phone.$params.minLength.min}} цифр. <br>
+            Сейчас: {{phone.length}}.
+          </small>
+
+          <small
+            class="invalid"
+            v-else-if="validPhoneNumber"
+          >
+            Номер должен начинаться с цифры "7"
+          </small>
+        </label>
+
+        <label class="form__label">Пол:
+          <div class="wrapper">
+            <select id="gender" class="form__select" v-model="gender" >
+              <option value="male" selected>Мужчина</option>
+              <option value="female">Женщина</option>
+            </select>
+          </div>
+        </label>
+
+        <label class="form__label required">Группа пациентов:
+          <select
+            id="group"
+            class="form__select form__select_group"
+            multiple
+            :class="{invalid: validGroup}"
+            v-model="group"
+          >
+            <option value="vip">VIP</option>
+            <option value="Propblem">Проблемные</option>
+            <option value="insurance">ОМС</option>
           </select>
-        </div>
-        <small
-          class="invalid"
-          v-if="($v.document.$dirty && !$v.document.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
+          <small
+            class="invalid"
+            v-if="validGroup"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
 
-      <label class="form__label form__label_mb-10">Серия:
-        <input
-          type="text"
-          class="form__input"
-          id="document-series"
-          v-model="documentSeries"
-        >
-      </label>
+        <label class="form__label">Лечащий врач:
+          <div class="wrapper">
+            <select
+              id="doctor"
+              class="form__select form__select_doctor"
+              v-model="doctor"
+            >
+              <option value="Ivanov">Иванов</option>
+              <option value="Zaharov">Захаров</option>
+              <option value="Сhernysheva">Чернышева</option>
+            </select>
+          </div>
+        </label>
 
-      <label class="form__label form__label_mb-10">Номер:
-        <input
-          type="text"
-          class="form__input"
-          id="document-number"
-          v-model="documentNumber"
-        >
-      </label>
+        <label class="form__label form__label_checkbox">Не отправлять смс:
+          <input
+            type="checkbox"
+            id="sms"
+            class="form__checkbox"
+            v-model="noSms"
+          >
+        </label>
 
-      <label class="form__label form__label_mb-10">Кем выдан:
-        <textarea
-          id="issued-by"
-          class="form__textarea"
-          v-model="issuedBy"
-        ></textarea>
-      </label>
+      </section>
 
-      <label class="form__label form__label_mb-10 required">Дата выдачи:
-        <input
-          type="date"
-          class="form__input"
-          id="date-issued"
-          :class="{invalid: ($v.dateIssued.$dirty && !$v.dateIssued.required)}"
-          v-model="dateIssued"
-        >
-        <small
-          class="invalid"
-          v-if="($v.dateIssued.$dirty && !$v.dateIssued.required)"
-        >
-          Поле обязательное для заполнения
-        </small>
-      </label>
-    </section>
+      <hr>
 
-    <button type="submit" class="form__submit">Создать</button>
-  </form>
+      <h3 class="form__title">Адрес:</h3>
+      <section class="adress">
+        <label class="form__label form__label_mb-0">Индекс:
+          <input
+            type="number"
+            class="form__input"
+            id="index"
+            v-model="index"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-0">Страна:
+          <input
+            type="text"
+            class="form__input"
+            id="country"
+            v-model="country"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-0">Область:
+          <input
+            type="text"
+            class="form__input"
+            id="region"
+            v-model="region"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-0 required">Город:
+          <input
+            type="text"
+            class="form__input"
+            id="city"
+            :class="{invalid: validCity}"
+            v-model="city"
+          >
+          <small
+            class="invalid"
+            v-if="validCity"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
+
+        <label class="form__label form__label_mb-0">Улица:
+          <input
+            type="text"
+            class="form__input"
+            id="street"
+            v-model="street"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-0">Дом:
+          <input
+            type="text"
+            class="form__input"
+            id="house"
+            v-model="house"
+          >
+        </label>
+      </section>
+
+      <hr>
+
+      <h3 class="form__title">Паспорт:</h3>
+      <section class="typeDocument">
+
+        <label class="form__label required">Тип документа:
+          <div class="wrapper">
+            <select
+              id="document"
+              class="form__select"
+              :class="{invalid: validDocument}"
+              v-model="document"
+            >
+              <option value="pasport">Паспорт</option>
+              <option value="birth-certificate">Свидетельство о рождении</option>
+              <option value="drivers-license">Водительское удостоверение</option>
+            </select>
+          </div>
+          <small
+            class="invalid"
+            v-if="validDocument"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
+
+        <label class="form__label form__label_mb-10">Серия:
+          <input
+            type="text"
+            class="form__input"
+            id="document-series"
+            v-model="documentSeries"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-10">Номер:
+          <input
+            type="text"
+            class="form__input"
+            id="document-number"
+            v-model="documentNumber"
+          >
+        </label>
+
+        <label class="form__label form__label_mb-10">Кем выдан:
+          <textarea
+            id="issued-by"
+            class="form__textarea"
+            v-model="issuedBy"
+          ></textarea>
+        </label>
+
+        <label class="form__label form__label_mb-10 required">Дата выдачи:
+          <input
+            type="date"
+            class="form__input"
+            id="date-issued"
+            :class="{invalid: validDateIssued}"
+            v-model="dateIssued"
+          >
+          <small
+            class="invalid"
+            v-if="validDateIssued"
+          >
+            Поле обязательное для заполнения
+          </small>
+        </label>
+      </section>
+
+      <button type="submit" class="form__submit">Создать</button>
+      <span class="annotation">(<small>✱</small>) - Поле обязательное для заполнения</span>
+    </form>
+    <template v-if="alert">
+      <Alert :msg="alertMsg" :className="alertClass" />
+    </template>
+  </div>
 </template>
 
 <script>
-import { required, minLength, maxLength } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength } from 'vuelidate/lib/validators';
+import Alert from '../components/Alert';
+
+const numberValidation = (value) => {
+  const num = value.split('');
+  console.log(num)
+  if (num[0] !== "7") {
+    return false
+  }
+  return true
+}
 
 export default {
   name: 'Form',
+  components: {
+    Alert,
+  },
   data: () => ({
     firstName: '',
     lastName: '',
@@ -300,7 +319,7 @@ export default {
     gender: '',
     group: [],
     doctor: '',
-    sms: false,
+    noSms: false,
     index: '',
     country: '',
     region: '',
@@ -312,13 +331,16 @@ export default {
     documentNumber: '',
     issuedBy: '',
     dateIssued: null,
-    submitStatus: '',
+    alert: false,
+    alertMsg: '',
+    alertClass: '',
   }),
   validations: {
     firstName: { required },
     lastName: { required },
     phone: {
       required,
+      numberValidation,
       minLength: minLength(11),
       maxLength: maxLength(11),
     },
@@ -328,10 +350,56 @@ export default {
     document: { required },
     dateIssued: { required },
   },
+  computed: {
+    validFirstName() {
+      return this.$v.firstName.$dirty && !this.$v.firstName.required
+    },
+    validLastName() {
+      return this.$v.lastName.$dirty && !this.$v.lastName.required
+    },
+    validDateborn() {
+      return this.$v.dateborn.$dirty && !this.$v.dateborn.required
+    },
+    validGroup() {
+      return this.$v.group.$dirty && !this.$v.group.required
+    },
+    validCity() {
+      return this.$v.city.$dirty && !this.$v.city.required
+    },
+    validDocument() {
+      return this.$v.document.$dirty && !this.$v.document.required
+    },
+    validDateIssued() {
+      return this.$v.dateIssued.$dirty && !this.$v.dateIssued.required
+    },
+    validPhoneRequired() {
+      return this.$v.phone.$dirty && !this.$v.phone.required
+    },
+    validPhoneMLength() {
+      return (this.$v.phone.$dirty && !this.$v.phone.minLength) ||
+            (this.$v.phone.$dirty && !this.$v.phone.maxLength)
+    },
+    validPhoneNumber() {
+      return this.$v.phone.$dirty && !this.$v.phone.numberValidation
+    },
+    validPhone() {
+      return (this.$v.phone.$dirty && !this.$v.phone.required) ||
+            (this.$v.phone.$dirty && !this.$v.phone.minLength) ||
+            (this.$v.phone.$dirty && !this.$v.phone.maxLength) ||
+            (this.$v.phone.$dirty && !this.$v.phone.numberValidation)
+    },
+  },
   methods: {
     onSubmit() {
       if (this.$v.$invalid) {
         this.$v.$touch();
+        console.log(this.$v)
+        this.alert = true;
+        this.alertMsg = 'Не отправлено.  Проверьте все поля.';
+        this.alertClass = 'error';
+        setTimeout(() => {
+          this.alert = false;
+        }, 5000);
         return
       }
       const post = {
@@ -343,7 +411,7 @@ export default {
         gender: this.gender,
         group: this.group,
         doctor: this.doctor,
-        sms: this.sms,
+        noSms: this.noSms,
         index: this.index,
         country: this.country,
         region: this.region,
@@ -357,12 +425,21 @@ export default {
         dateIssued: this.dateIssued,
       };
       console.log(post);
+      this.alert = true;
+      this.alertMsg = 'Отправлено';
+      this.alertClass = 'success';
+      setTimeout(() => {
+        this.alert = false;
+      }, 5000);
     }
   }
 }
 </script>
 
 <style lang="sass">
+.container
+  margin: 0 auto
+  width: 960px
 .form
   position: relative
   background: rgb(48, 152, 178)
@@ -391,10 +468,12 @@ export default {
     cursor: pointer
   &__input
     border: none
-    width: 98%
+    width: 95%
     border-radius: 5px
     padding: 3px
     padding-left: 10px
+  &__input::placeholder
+    font-size: 10px
   &__select
     position: relative
     border: none
@@ -500,11 +579,28 @@ export default {
   small.invalid
     border: none
     color: #a22424
-
+  .annotation
+    position: absolute
+    top: 13px
+    right: 14px
+    color: white
+    font-size: 11px
+    small
+      color: #dc0f0f
+@media (min-width: 1216px)
+  .container
+    width: 80%
 @media (max-width: 991px)
-  .form__label
-    width: 28%
+  .container
+    width: 720px
+  .form
+    &__label
+      width: 28%
+    &__input
+      width: 92%
 @media (max-width: 767px)
+  .container
+    width: 540px
   .form
     padding-bottom: 50px
     &__label
@@ -534,6 +630,8 @@ export default {
       font-size: 17px
       height: 35px
 @media (max-width: 574px)
+  .container
+    width: 100%
   .form
     padding-bottom: 90px
     &__label
@@ -548,11 +646,11 @@ export default {
       margin-top: 10px
     &__input
       height: 25px
-      width: 95%
+      width: 96%
     &__checkbox
       margin-top: 2px
     &__textarea
-      width: 96%
+      width: 97%
     &__submit
       width: 50%
       padding: 0
@@ -561,4 +659,7 @@ export default {
       transform: translateX(50%)
       font-size: 16px
       height: 30px
+    .annotation
+      font-size: 10px
+      top: 10px
 </style>
